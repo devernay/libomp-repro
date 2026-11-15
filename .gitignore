@@ -1,0 +1,6 @@
+/llvm-project/
+/src/
+/build/
+/prefix/
+/bin/
+*.log
