@@ -1,0 +1,4 @@
+(version 1)
+; Deny POSIX shared memory (shm_open), as a sandboxed app may.
+(allow default)
+(deny ipc-posix-shm*)

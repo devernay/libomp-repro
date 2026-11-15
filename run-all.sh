@@ -11,3 +11,4 @@ for a in arm64 x86_64; do for v in $REL main; do ./runtest.sh $v $a 5; done; don
 for a in arm64 x86_64; do for v in 11.1.0 21.1.7 23.1.5 main; do ./runstress.sh $v $a 3; done; done
 for v in 11.1.0 12.0.1 17.0.6 21.1.7 23.1.5 main; do ./run-test-package.sh $v-debug arm64 5; done
 for a in arm64 x86_64; do for v in $REL main; do ./run-test-package.sh $v $a 5; done; done
+for v in 11.1.0 12.0.1 13.0.0 14.0.6 17.0.6 21.1.7 23.1.5 main; do ./run-noshm.sh $v arm64; done

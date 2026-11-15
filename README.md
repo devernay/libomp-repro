@@ -1,6 +1,6 @@
-# libomp on macOS: two crashes, both fixed upstream
+# libomp on macOS: three crashes, all fixed upstream
 
-This repository has minimal reproducers, test scripts and bisection results for two
+This repository has minimal reproducers, test scripts and bisection results for three
 LLVM OpenMP runtime (libomp) bugs on macOS. Together they led several projects to stay
 on libomp 11.1.0 for years:
 
@@ -8,23 +8,26 @@ on libomp 11.1.0 for years:
   libomp 12.0.0 introduces an assertion failure when running OpenMP from a background thread
 - [NatronGitHub/Natron#672](https://github.com/NatronGitHub/Natron/issues/672):
   OpenMP plugins crash on macOS
+- [RawTherapee/RawTherapee#6220](https://github.com/RawTherapee/RawTherapee/issues/6220):
+  immediate crash with libomp 12 on Apple Silicon. Sandboxed builds also failed with
+  `OMP: Error #179: Function Can't open SHM2 failed` (bug 3).
 - [microsoft/LightGBM#4229](https://github.com/microsoft/LightGBM/issues/4229),
   [microsoft/LightGBM#5764](https://github.com/microsoft/LightGBM/issues/5764)
 - [conan-io/conan-center-index#19857](https://github.com/conan-io/conan-center-index/pull/19857):
   the llvm-openmp recipe rejects Debug builds on armv8 because "All versions except
   for v11 crash with a segfault for the simple test_package.cpp test"
 
-**Summary.** These are two different bugs. Neither is specific to x86_64 or to arm64, and
-both are fixed in current libomp (21.1.7, 22.1.8, 23.1.5, main):
+**Summary.** These are three different bugs. None of them is specific to x86_64 or to arm64,
+and all are fixed in current libomp (21.1.7, 22.1.8, 23.1.5, main):
 
-| | Bug 1: foreign threads | Bug 2: Debug-only crash at exit |
-|---|---|---|
-| Symptom | `OMP: Error #131: Thread identifier invalid`, `OMP: Error #13: Assertion failure at kmp_runtime.cpp(3689)`, or SIGSEGV | SIGSEGV in `__kmp_get_global_thread_id` during `exit()` |
-| Affects | Release and Debug builds, arm64 and x86_64 | Debug (`KMP_DEBUG`) builds only |
-| Tested broken | 12.0.1 | 12.0.1, 13.0.0, 17.0.6 (11.1.0 is fine) |
-| Fixed by | [f1b9ce2736d8](https://github.com/llvm/llvm-project/commit/f1b9ce2736d826df2ff4cbd67116864f0856334f) "[OpenMP] Fix a few issues with hidden helper task" ([D105308](https://reviews.llvm.org/D105308)) | [35fdf8d70329](https://github.com/llvm/llvm-project/commit/35fdf8d70329b2b067cb9433a5891f2a57e2f4ed) "[OpenMP] Fix a segment fault in `__kmp_get_global_thread_id`" ([D159324](https://reviews.llvm.org/D159324)) |
-| First release with the fix | **13.0.0** | **18.1.0** |
-| Reproducer | [`repro.c`](repro.c) | [`test_package.cpp`](test_package.cpp) with a Debug libomp |
+| | Bug 1: foreign threads | Bug 2: Debug-only crash at exit | Bug 3: no POSIX shared memory (sandbox) |
+|---|---|---|---|
+| Symptom | `OMP: Error #131: Thread identifier invalid`, `OMP: Error #13: Assertion failure at kmp_runtime.cpp(3689)`, or SIGSEGV | SIGSEGV in `__kmp_get_global_thread_id` during `exit()` | `OMP: Error #179` (`#178` in 12–13): `Function Can't open SHM2 failed: OMP: System error #1: Operation not permitted` at startup |
+| Affects | Release and Debug builds, arm64 and x86_64 | Debug (`KMP_DEBUG`) builds only | processes where `shm_open` is denied, e.g. sandboxed apps |
+| Tested broken | 12.0.1 | 12.0.1, 13.0.0, 17.0.6 (11.1.0 is fine) | 12.0.1, 13.0.0, 14.0.6, 15.0.7 (11.1.0 is fine) |
+| Fixed by | [f1b9ce2736d8](https://github.com/llvm/llvm-project/commit/f1b9ce2736d826df2ff4cbd67116864f0856334f) "[OpenMP] Fix a few issues with hidden helper task" ([D105308](https://reviews.llvm.org/D105308)) | [35fdf8d70329](https://github.com/llvm/llvm-project/commit/35fdf8d70329b2b067cb9433a5891f2a57e2f4ed) "[OpenMP] Fix a segment fault in `__kmp_get_global_thread_id`" ([D159324](https://reviews.llvm.org/D159324)) | [dafebd5b5a08](https://github.com/llvm/llvm-project/commit/dafebd5b5a08dde25f5f52f65cac54bd6ec0ecde) "[OpenMP] Create a temp file in /tmp if /dev/shm is not accessible" plus follow-ups |
+| First release with the fix | **13.0.0** | **18.1.0** | **16.0.0** |
+| Reproducer | [`repro.c`](repro.c) | [`test_package.cpp`](test_package.cpp) with a Debug libomp | [`test_package.cpp`](test_package.cpp) under [`noshm.sb`](noshm.sb) |
 
 ## Bug 1: OpenMP used from short-lived non-OpenMP threads (libomp 12.x)
 
@@ -94,6 +97,38 @@ it. Release builds compile that code out and pass. 18.1.0 added a null check
 This is **not** llvm#49923. It is what the conan recipe comment refers to, and it was
 the source of the claim that "the bug persists until 17".
 
+## Bug 3: libomp aborts when POSIX shared memory is denied (libomp 12–15)
+
+Since 12.0.0, libomp registers itself at startup in a POSIX shared memory segment
+(`shm_open("/__KMP_REGISTERED_LIB_<pid>")`). It uses that segment to detect two copies of
+the OpenMP runtime in one process. If `shm_open` fails, libomp 12–15 abort before
+`main()`. That can happen in a sandboxed app, for example one built with the App Sandbox
+entitlement:
+
+```
+$ sandbox-exec -f noshm.sb ./test_package     # libomp 15.0.7
+OMP: Error #179: Function Can't open SHM2 failed:
+OMP: System error #1: Operation not permitted
+Abort trap: 6
+```
+
+([`noshm.sb`](noshm.sb) allows everything except `ipc-posix-shm*`.) 16.0.0 falls back to
+a regular file in `/tmp` when shared memory is not available
+([dafebd5b5a08](https://github.com/llvm/llvm-project/commit/dafebd5b5a08dde25f5f52f65cac54bd6ec0ecde)).
+That commit alone still crashes (SIGSEGV), but the 16.0.0 release works. 18.1.0 added an
+environment-variable method as a third fallback
+([102d86471915](https://github.com/llvm/llvm-project/commit/102d864719153bb5d18a17926c536b66d258df38)).
+
+| libomp | `test_package` under `noshm.sb` |
+|---|---|
+| 11.1.0 (x86_64) | ok |
+| 12.0.1, 13.0.0, 15.0.7 (arm64), 14.0.6 (x86_64) | **abort** (`Can't open SHM2`) |
+| dafebd5b5a08^ (arm64) | **abort** |
+| dafebd5b5a08 (arm64) | **SIGSEGV** |
+| 16.0.0, 21.1.7, 23.1.5 (arm64), 17.0.6 (x86_64) | ok |
+
+Run it with `./run-noshm.sh 13.0.0 arm64`.
+
 ## Results
 
 macOS 27, Apple M5 Pro (18 cores); x86_64 runs under Rosetta 2. libomp was built with
@@ -144,6 +179,7 @@ BT=Debug ./build-libomp.sh llvmorg-17.0.6 arm64 17.0.6-debug
 ./runtest.sh 12.0.1 arm64 5               # bug 1: 5 runs of "repro 30 32 10"
 ./runstress.sh 21.1.7 x86_64 3            # broader stress, 3 runs of 20 s
 ./run-test-package.sh 17.0.6-debug arm64  # bug 2
+./run-noshm.sh 13.0.0 arm64               # bug 3
 
 ./run-all.sh                              # most of the table above
 ```
@@ -180,6 +216,7 @@ The tests can also be built against an installed libomp, for example MacPorts
 | `test_package.cpp` | reproducer for bug 2, from conan-center-index (MIT) |
 | `build-libomp.sh` | build libomp at any git ref, for arm64 or x86_64 |
 | `runtest.sh`, `runstress.sh`, `run-test-package.sh` | build a test against a libomp and run it N times |
+| `noshm.sb`, `run-noshm.sh` | sandbox profile denying POSIX shared memory, and its runner (bug 3) |
 | `bisect-step.sh` | `git bisect run` helper for both bugs |
 | `run-all.sh` | build the main versions and run all tests |
 | `common.sh` | shared settings (`LLVM_PROJECT`, compilers) |
