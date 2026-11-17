@@ -16,10 +16,11 @@ if [ ! -d "$src" ]; then
   git -C "$LLVM_PROJECT" worktree add -q --no-checkout --detach -f "$src" "$ref"
   git -C "$src" sparse-checkout set openmp cmake llvm/cmake llvm/utils runtimes third-party libc/cmake libcxx/cmake
   git -C "$src" checkout -q --detach "$ref"
-  # libomp 11.x needs https://reviews.llvm.org/D88252 to build for arm64 macOS
-  if [ "$arch" = arm64 ] && (cd "$src/openmp" && patch --dry-run -s -f -p0 < "$HERE/patches/D88252-libomp11-arm64.diff" >/dev/null 2>&1); then
-    (cd "$src/openmp" && patch -s -p0 < "$HERE/patches/D88252-libomp11-arm64.diff")
-  fi
+fi
+# libomp 11.x needs https://reviews.llvm.org/D88252 to build for arm64 macOS
+# (applied once; the change only affects the AArch64 code path)
+if (cd "$src/openmp" && patch --dry-run -s -f -p0 < "$HERE/patches/D88252-libomp11-arm64.diff" >/dev/null 2>&1); then
+  (cd "$src/openmp" && patch -s -p0 < "$HERE/patches/D88252-libomp11-arm64.diff")
 fi
 srcdir=$src/openmp; extra="-DOPENMP_STANDALONE_BUILD=ON"
 if grep -q "legacy standalone build mode has been removed" "$src/openmp/CMakeLists.txt"; then

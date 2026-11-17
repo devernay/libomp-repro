@@ -3,7 +3,8 @@
 . "$(dirname "$0")/common.sh"
 v=$1; arch=$2; runs=${3:-3}; shift 3 2>/dev/null
 p=$HERE/prefix/$v-$arch; exe=$HERE/bin/stress-$v-$arch; mkdir -p "$HERE/bin"
-"$TEST_CC" -O1 -arch $arch $OMP_FLAGS -I"$p/include" "$HERE/stress.c" -L"$p/lib" -lomp -o "$exe" || { echo "$v $arch: compile failed"; exit 1; }
+stub=""; nm -gU "$p/lib/libomp.dylib" 2>/dev/null | grep -q " ___kmpc_dispatch_deinit$" || stub=-DNEED_DISPATCH_DEINIT_STUB
+"$TEST_CC" -O1 -arch $arch $OMP_FLAGS $stub -I"$p/include" "$HERE/stress.c" -L"$p/lib" -lomp -o "$exe" || { echo "$v $arch: compile failed"; exit 1; }
 otool -L "$exe" | grep -q "$p/lib/libomp.dylib" || { echo "$v $arch: not linked to $p"; exit 1; }
 fail=0; msgs=""
 for i in $(seq $runs); do

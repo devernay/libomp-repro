@@ -1,0 +1,237 @@
+# libomp-repro run-all.sh, 2026-11-17 11:03 CET
+# macOS 27.2.1 (26B131), Apple M5 Pro, 18 CPUs
+# build compiler: Apple clang version 21.0.0 (clang-2100.4.1.1)
+# test compiler:  Apple clang version 21.0.0 (clang-2100.4.1.1)
+# x86_64 runs under Rosetta 2 on arm64 hosts
+# stress rows for libomp < 19 were re-run after adding the __kmpc_dispatch_deinit stub (see runstress.sh)
+# 11.1.0 = 1fdec59bffc1
+# 12.0.1 = fed41342a82f
+# f1b9ce2736d8-parent = edc1f0c12c83
+# f1b9ce2736d8 = f1b9ce2736d8
+# 13.0.0 = d7b669b3a303
+# 13.0.1 = 75e33f71c2da
+# 14.0.6 = f28c006a5895
+# 15.0.7 = 8dfdcc7b7bf6
+# dafebd5b5a08-parent = 56313f65cce7
+# dafebd5b5a08 = dafebd5b5a08
+# 16.0.0 = 08d094a0e457
+# 17.0.6 = 6009708b4367
+# 35fdf8d70329-parent = ef8121b109ef
+# 35fdf8d70329 = 35fdf8d70329
+# 18.1.8 = 3b5b5c1ec4a3
+# 19.1.7 = cd708029e0b2
+# 20.1.8 = 87f0227cb601
+# 21.1.7 = 292dc2b86f66
+# 22.1.8 = ca7933e47d3a
+# 23.1.5 = 392dfff97d29
+# main = 5a50b09613ce
+repro 11.1.0 arm64: 0/5 failed
+stress 11.1.0 arm64: 0/3 failed
+test_package 11.1.0 arm64: 0/5 failed
+noshm 11.1.0 arm64: rc=0 
+test_package 11.1.0-debug arm64: 0/5 failed
+repro 11.1.0 x86_64: 0/5 failed
+stress 11.1.0 x86_64: 0/3 failed
+test_package 11.1.0 x86_64: 0/5 failed
+noshm 11.1.0 x86_64: rc=0 
+test_package 11.1.0-debug x86_64: 0/5 failed
+repro 12.0.1 arm64: 5/5 failed [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=139 ] [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=134 OMP: Error #13: Assertion failure at kmp_runtime.cpp(3689).]
+stress 12.0.1 arm64: 3/3 failed [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=139 ]
+test_package 12.0.1 arm64: 0/5 failed
+noshm 12.0.1 arm64: rc=134 OMP: Error #178: Function Can't open SHM2 failed:
+test_package 12.0.1-debug arm64: 5/5 failed
+repro 12.0.1 x86_64: 5/5 failed [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=139 ] [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=134 OMP: Error #131: Thread identifier invalid.]
+stress 12.0.1 x86_64: 3/3 failed [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=134 OMP: Error #131: Thread identifier invalid.]
+test_package 12.0.1 x86_64: 0/5 failed
+noshm 12.0.1 x86_64: rc=134 OMP: Error #178: Function Can't open SHM2 failed:
+test_package 12.0.1-debug x86_64: 0/5 failed
+repro f1b9ce2736d8-parent arm64: 5/5 failed [rc=139 ] [rc=139 ] [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=139 ] [rc=134 OMP: Error #13: Assertion failure at kmp_runtime.cpp(3686).]
+stress f1b9ce2736d8-parent arm64: 3/3 failed [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=134 OMP: Error #13: Assertion failure at kmp_runtime.cpp(3686).] [rc=124 ]
+test_package f1b9ce2736d8-parent arm64: 0/5 failed
+noshm f1b9ce2736d8-parent arm64: rc=134 OMP: Error #178: Function Can't open SHM2 failed:
+test_package f1b9ce2736d8-parent-debug arm64: 5/5 failed
+repro f1b9ce2736d8-parent x86_64: 5/5 failed [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=134 OMP: Error #13: Assertion failure at kmp_runtime.cpp(3686).] [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=134 OMP: Error #131: Thread identifier invalid.]
+stress f1b9ce2736d8-parent x86_64: 3/3 failed [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=134 OMP: Error #131: Thread identifier invalid.] [rc=134 OMP: Error #131: Thread identifier invalid.]
+test_package f1b9ce2736d8-parent x86_64: 0/5 failed
+noshm f1b9ce2736d8-parent x86_64: rc=134 OMP: Error #178: Function Can't open SHM2 failed:
+test_package f1b9ce2736d8-parent-debug x86_64: 0/5 failed
+repro f1b9ce2736d8 arm64: 0/5 failed
+stress f1b9ce2736d8 arm64: 0/3 failed
+test_package f1b9ce2736d8 arm64: 0/5 failed
+noshm f1b9ce2736d8 arm64: rc=134 OMP: Error #178: Function Can't open SHM2 failed:
+test_package f1b9ce2736d8-debug arm64: 5/5 failed
+repro f1b9ce2736d8 x86_64: 0/5 failed
+stress f1b9ce2736d8 x86_64: 0/3 failed
+test_package f1b9ce2736d8 x86_64: 0/5 failed
+noshm f1b9ce2736d8 x86_64: rc=134 OMP: Error #178: Function Can't open SHM2 failed:
+test_package f1b9ce2736d8-debug x86_64: 0/5 failed
+repro 13.0.0 arm64: 0/5 failed
+stress 13.0.0 arm64: 0/3 failed
+test_package 13.0.0 arm64: 0/5 failed
+noshm 13.0.0 arm64: rc=134 OMP: Error #178: Function Can't open SHM2 failed:
+test_package 13.0.0-debug arm64: 5/5 failed
+repro 13.0.0 x86_64: 0/5 failed
+stress 13.0.0 x86_64: 0/3 failed
+test_package 13.0.0 x86_64: 0/5 failed
+noshm 13.0.0 x86_64: rc=134 OMP: Error #178: Function Can't open SHM2 failed:
+test_package 13.0.0-debug x86_64: 0/5 failed
+repro 13.0.1 arm64: 0/5 failed
+stress 13.0.1 arm64: 0/3 failed
+test_package 13.0.1 arm64: 0/5 failed
+noshm 13.0.1 arm64: rc=134 OMP: Error #178: Function Can't open SHM2 failed:
+test_package 13.0.1-debug arm64: 5/5 failed
+repro 13.0.1 x86_64: 0/5 failed
+stress 13.0.1 x86_64: 0/3 failed
+test_package 13.0.1 x86_64: 0/5 failed
+noshm 13.0.1 x86_64: rc=134 OMP: Error #178: Function Can't open SHM2 failed:
+test_package 13.0.1-debug x86_64: 0/5 failed
+repro 14.0.6 arm64: 0/5 failed
+stress 14.0.6 arm64: 0/3 failed
+test_package 14.0.6 arm64: 0/5 failed
+noshm 14.0.6 arm64: rc=134 OMP: Error #179: Function Can't open SHM2 failed:
+test_package 14.0.6-debug arm64: 5/5 failed
+repro 14.0.6 x86_64: 0/5 failed
+stress 14.0.6 x86_64: 0/3 failed
+test_package 14.0.6 x86_64: 0/5 failed
+noshm 14.0.6 x86_64: rc=134 OMP: Error #179: Function Can't open SHM2 failed:
+test_package 14.0.6-debug x86_64: 0/5 failed
+repro 15.0.7 arm64: 0/5 failed
+stress 15.0.7 arm64: 0/3 failed
+test_package 15.0.7 arm64: 0/5 failed
+noshm 15.0.7 arm64: rc=134 OMP: Error #179: Function Can't open SHM2 failed:
+test_package 15.0.7-debug arm64: 5/5 failed
+repro 15.0.7 x86_64: 0/5 failed
+stress 15.0.7 x86_64: 0/3 failed
+test_package 15.0.7 x86_64: 0/5 failed
+noshm 15.0.7 x86_64: rc=134 OMP: Error #179: Function Can't open SHM2 failed:
+test_package 15.0.7-debug x86_64: 0/5 failed
+repro dafebd5b5a08-parent arm64: 0/5 failed
+stress dafebd5b5a08-parent arm64: 0/3 failed
+test_package dafebd5b5a08-parent arm64: 0/5 failed
+noshm dafebd5b5a08-parent arm64: rc=134 OMP: Error #179: Function Can't open SHM2 failed:
+test_package dafebd5b5a08-parent-debug arm64: 5/5 failed
+repro dafebd5b5a08-parent x86_64: 0/5 failed
+stress dafebd5b5a08-parent x86_64: 0/3 failed
+test_package dafebd5b5a08-parent x86_64: 0/5 failed
+noshm dafebd5b5a08-parent x86_64: rc=134 OMP: Error #179: Function Can't open SHM2 failed:
+test_package dafebd5b5a08-parent-debug x86_64: 0/5 failed
+repro dafebd5b5a08 arm64: 0/5 failed
+stress dafebd5b5a08 arm64: 0/3 failed
+test_package dafebd5b5a08 arm64: 0/5 failed
+noshm dafebd5b5a08 arm64: rc=139 
+test_package dafebd5b5a08-debug arm64: 5/5 failed
+repro dafebd5b5a08 x86_64: 0/5 failed
+stress dafebd5b5a08 x86_64: 0/3 failed
+test_package dafebd5b5a08 x86_64: 0/5 failed
+noshm dafebd5b5a08 x86_64: rc=139 
+test_package dafebd5b5a08-debug x86_64: 0/5 failed
+repro 16.0.0 arm64: 0/5 failed
+stress 16.0.0 arm64: 0/3 failed
+test_package 16.0.0 arm64: 0/5 failed
+noshm 16.0.0 arm64: rc=0 
+test_package 16.0.0-debug arm64: 5/5 failed
+repro 16.0.0 x86_64: 0/5 failed
+stress 16.0.0 x86_64: 0/3 failed
+test_package 16.0.0 x86_64: 0/5 failed
+noshm 16.0.0 x86_64: rc=0 
+test_package 16.0.0-debug x86_64: 0/5 failed
+repro 17.0.6 arm64: 0/5 failed
+stress 17.0.6 arm64: 0/3 failed
+test_package 17.0.6 arm64: 0/5 failed
+noshm 17.0.6 arm64: rc=0 
+test_package 17.0.6-debug arm64: 5/5 failed
+repro 17.0.6 x86_64: 0/5 failed
+stress 17.0.6 x86_64: 0/3 failed
+test_package 17.0.6 x86_64: 0/5 failed
+noshm 17.0.6 x86_64: rc=0 
+test_package 17.0.6-debug x86_64: 0/5 failed
+repro 35fdf8d70329-parent arm64: 0/5 failed
+stress 35fdf8d70329-parent arm64: 0/3 failed
+test_package 35fdf8d70329-parent arm64: 0/5 failed
+noshm 35fdf8d70329-parent arm64: rc=0 
+test_package 35fdf8d70329-parent-debug arm64: 5/5 failed
+repro 35fdf8d70329-parent x86_64: 0/5 failed
+stress 35fdf8d70329-parent x86_64: 0/3 failed
+test_package 35fdf8d70329-parent x86_64: 0/5 failed
+noshm 35fdf8d70329-parent x86_64: rc=0 
+test_package 35fdf8d70329-parent-debug x86_64: 0/5 failed
+repro 35fdf8d70329 arm64: 0/5 failed
+stress 35fdf8d70329 arm64: 0/3 failed
+test_package 35fdf8d70329 arm64: 0/5 failed
+noshm 35fdf8d70329 arm64: rc=0 
+test_package 35fdf8d70329-debug arm64: 0/5 failed
+repro 35fdf8d70329 x86_64: 0/5 failed
+stress 35fdf8d70329 x86_64: 0/3 failed
+test_package 35fdf8d70329 x86_64: 0/5 failed
+noshm 35fdf8d70329 x86_64: rc=0 
+test_package 35fdf8d70329-debug x86_64: 0/5 failed
+repro 18.1.8 arm64: 0/5 failed
+stress 18.1.8 arm64: 0/3 failed
+test_package 18.1.8 arm64: 0/5 failed
+noshm 18.1.8 arm64: rc=0 
+test_package 18.1.8-debug arm64: 0/5 failed
+repro 18.1.8 x86_64: 0/5 failed
+stress 18.1.8 x86_64: 0/3 failed
+test_package 18.1.8 x86_64: 0/5 failed
+noshm 18.1.8 x86_64: rc=0 
+test_package 18.1.8-debug x86_64: 0/5 failed
+repro 19.1.7 arm64: 0/5 failed
+stress 19.1.7 arm64: 0/3 failed
+test_package 19.1.7 arm64: 0/5 failed
+noshm 19.1.7 arm64: rc=0 
+test_package 19.1.7-debug arm64: 0/5 failed
+repro 19.1.7 x86_64: 0/5 failed
+stress 19.1.7 x86_64: 0/3 failed
+test_package 19.1.7 x86_64: 0/5 failed
+noshm 19.1.7 x86_64: rc=0 
+test_package 19.1.7-debug x86_64: 0/5 failed
+repro 20.1.8 arm64: 0/5 failed
+stress 20.1.8 arm64: 0/3 failed
+test_package 20.1.8 arm64: 0/5 failed
+noshm 20.1.8 arm64: rc=0 
+test_package 20.1.8-debug arm64: 0/5 failed
+repro 20.1.8 x86_64: 0/5 failed
+stress 20.1.8 x86_64: 0/3 failed
+test_package 20.1.8 x86_64: 0/5 failed
+noshm 20.1.8 x86_64: rc=0 
+test_package 20.1.8-debug x86_64: 0/5 failed
+repro 21.1.7 arm64: 0/5 failed
+stress 21.1.7 arm64: 0/3 failed
+test_package 21.1.7 arm64: 0/5 failed
+noshm 21.1.7 arm64: rc=0 
+test_package 21.1.7-debug arm64: 0/5 failed
+repro 21.1.7 x86_64: 0/5 failed
+stress 21.1.7 x86_64: 0/3 failed
+test_package 21.1.7 x86_64: 0/5 failed
+noshm 21.1.7 x86_64: rc=0 
+test_package 21.1.7-debug x86_64: 0/5 failed
+repro 22.1.8 arm64: 0/5 failed
+stress 22.1.8 arm64: 0/3 failed
+test_package 22.1.8 arm64: 0/5 failed
+noshm 22.1.8 arm64: rc=0 
+test_package 22.1.8-debug arm64: 0/5 failed
+repro 22.1.8 x86_64: 0/5 failed
+stress 22.1.8 x86_64: 0/3 failed
+test_package 22.1.8 x86_64: 0/5 failed
+noshm 22.1.8 x86_64: rc=0 
+test_package 22.1.8-debug x86_64: 0/5 failed
+repro 23.1.5 arm64: 0/5 failed
+stress 23.1.5 arm64: 0/3 failed
+test_package 23.1.5 arm64: 0/5 failed
+noshm 23.1.5 arm64: rc=0 
+test_package 23.1.5-debug arm64: 0/5 failed
+repro 23.1.5 x86_64: 0/5 failed
+stress 23.1.5 x86_64: 0/3 failed
+test_package 23.1.5 x86_64: 0/5 failed
+noshm 23.1.5 x86_64: rc=0 
+test_package 23.1.5-debug x86_64: 0/5 failed
+repro main arm64: 0/5 failed
+stress main arm64: 0/3 failed
+test_package main arm64: 0/5 failed
+noshm main arm64: rc=0 
+test_package main-debug arm64: 0/5 failed
+repro main x86_64: 0/5 failed
+stress main x86_64: 0/3 failed
+test_package main x86_64: 0/5 failed
+noshm main x86_64: rc=0 
+test_package main-debug x86_64: 0/5 failed

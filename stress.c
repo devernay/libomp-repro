@@ -8,6 +8,13 @@
 #include <unistd.h>
 #include <stdatomic.h>
 
+#ifdef NEED_DISPATCH_DEINIT_STUB
+/* clang >= 19 calls __kmpc_dispatch_deinit after schedule(dynamic) loops;
+ * libomp < 19 does not export it. runstress.sh defines this macro for such
+ * libomp builds. Like the stub Natron backported to libomp 11.1.0, it does nothing. */
+void __kmpc_dispatch_deinit(void *loc, int gtid) { (void)loc; (void)gtid; }
+#endif
+
 static atomic_long work;
 static volatile int stop;
 
